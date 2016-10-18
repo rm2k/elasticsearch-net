@@ -14,7 +14,13 @@ namespace Nest
 {
 	internal class HasConstantExpressionVisitor : ExpressionVisitor
 	{
-		public bool Found  { get; private set; }
+		private bool _found;
+		public bool Found
+		{
+			get { return _found; }
+			// This is only set to true once to prevent clobbering from subsequent node visits
+			private set { if (!_found) _found = value; }
+		}
 
 		public HasConstantExpressionVisitor(Expression e)
 		{
@@ -23,7 +29,7 @@ namespace Nest
 
 		public override Expression Visit(Expression node)
 		{
-			if (!Found)
+			if (!this.Found)
 				return base.Visit(node);
 			return node;
 		}
