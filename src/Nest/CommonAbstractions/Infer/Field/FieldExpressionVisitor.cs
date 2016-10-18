@@ -14,9 +14,7 @@ namespace Nest
 {
 	internal class HasConstantExpressionVisitor : ExpressionVisitor
 	{
-		public bool Found => this.FoundConstants.Any(b => b);
-
-		private List<bool> FoundConstants { get; set; } = new List<bool>();
+		public bool Found  { get; private set; }
 
 		public HasConstantExpressionVisitor(Expression e)
 		{
@@ -36,7 +34,7 @@ namespace Nest
 			{
 				var lastArg = node.Arguments.Last();
 				var constantExpression = lastArg as ConstantExpression;
-				this.FoundConstants.Add(constantExpression == null);
+				this.Found = constantExpression == null;
 				return base.VisitMethodCall(node);
 			}
 			else if (node.Method.Name == "get_Item" && node.Arguments.Any())
@@ -51,7 +49,7 @@ namespace Nest
 					return base.VisitMethodCall(node);
 				var lastArg = node.Arguments.Last();
 				var constantExpression = lastArg as ConstantExpression;
-				this.FoundConstants.Add(constantExpression == null);
+				this.Found = constantExpression == null;
 			}
 			return base.VisitMethodCall(node);
 		}
